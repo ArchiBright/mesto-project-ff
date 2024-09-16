@@ -18,14 +18,15 @@ function createCard(cardData, deleteCallback) {
     return cardElement;
   }
 
+  function removeCard(cardElement) {
+    cardElement.remove();
+  } 
+
   function renderCards(cards) {
     const cardList = document.querySelector('.places__list');
   
     cards.forEach(cardData => {
-      const cardElement = createCard(cardData, (cardElement) => {
-
-        cardElement.remove();
-      });
+      const cardElement = createCard(cardData, removeCard);
       cardList.appendChild(cardElement);
     });
   }
