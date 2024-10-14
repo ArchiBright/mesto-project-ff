@@ -33,17 +33,26 @@ function createCard(cardData, deleteCallback) {
     });
   }
 
-  const editButton = document.querySelector('.profile__edit-button');
+const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
-
-// Function to open the popup
+const addButton = document.querySelector('.profile__add-button');
+const addPopup = document.querySelector('.popup_type_new-card');
+const imagePopup = document.querySelector('.popup_type_image');
 function openPopup(popup) {
-  popup.classList.add('popup_opened');
+  popup.style.display = 'flex';
 }
 
-// Add event listener to the edit button
+
 editButton.addEventListener('click', () => {
   openPopup(editPopup);
+});
+
+addButton.addEventListener('click', () => {
+  openPopup(addPopup);
+});
+
+editButton.addEventListener('click', () => {
+  openPopup(imagePopup);
 });
 
   
