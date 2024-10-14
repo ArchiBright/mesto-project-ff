@@ -5,6 +5,8 @@ function createCard(cardData, deleteCallback) {
     const cardImage = template.querySelector('.card__image');
     const cardTitle = template.querySelector('.card__title');
     const deleteButton = template.querySelector('.card__delete-button');
+    
+    
   
     cardTitle.textContent = cardData.name;
     cardImage.src = cardData.link;
@@ -30,6 +32,23 @@ function createCard(cardData, deleteCallback) {
       cardList.appendChild(cardElement);
     });
   }
+
+  const editButton = document.querySelector('.profile__edit-button');
+const editPopup = document.querySelector('.popup_type_edit');
+
+// Function to open the popup
+function openPopup(popup) {
+  popup.classList.add('popup_opened');
+}
+
+// Add event listener to the edit button
+editButton.addEventListener('click', () => {
+  openPopup(editPopup);
+});
+
+  
   
 
   renderCards(initialCards);
+
+  
