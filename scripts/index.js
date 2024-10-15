@@ -32,16 +32,23 @@ function createCard(cardData, deleteCallback) {
       cardList.appendChild(cardElement);
     });
   }
+  
 
 const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
 const addButton = document.querySelector('.profile__add-button');
 const addPopup = document.querySelector('.popup_type_new-card');
-const imagePopup = document.querySelector('.popup_type_image');
+const likeButton = document.querySelector('.card__like-button');
+const closeButtons = document.querySelectorAll('.popup__close');
+
+
 function openPopup(popup) {
   popup.style.display = 'flex';
 }
 
+function closePopup(popup) {
+  popup.style.display = 'none';
+}
 
 editButton.addEventListener('click', () => {
   openPopup(editPopup);
@@ -51,8 +58,11 @@ addButton.addEventListener('click', () => {
   openPopup(addPopup);
 });
 
-editButton.addEventListener('click', () => {
-  openPopup(imagePopup);
+closeButtons.forEach((button) => {
+  button.addEventListener('click', (event) => {
+    const popup = event.target.closest('.popup'); 
+    closePopup(popup); 
+  });
 });
 
   
