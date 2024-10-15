@@ -1,55 +1,70 @@
-
 function createCard(cardData, deleteCallback) {
-    const template = document.querySelector('#card-template').content.cloneNode(true);
-    const cardElement = template.querySelector('.card');
-    const cardImage = template.querySelector('.card__image');
-    const cardTitle = template.querySelector('.card__title');
-    const deleteButton = template.querySelector('.card__delete-button');
-    
-    
+  const template = document.querySelector('#card-template').content.cloneNode(true);
+  const cardElement = template.querySelector('.card');
+  const cardImage = template.querySelector('.card__image');
+  const cardTitle = template.querySelector('.card__title');
+  const deleteButton = template.querySelector('.card__delete-button');
   
-    cardTitle.textContent = cardData.name;
-    cardImage.src = cardData.link;
-    cardImage.alt = cardData.name;
+  cardTitle.textContent = cardData.name;
+  cardImage.src = cardData.link;
+  cardImage.alt = cardData.name;
   
+  // Add click event to open the image popup when the card image is clicked
+  cardImage.addEventListener('click', () => {
+    openImagePopup(cardData.link, cardData.name, cardData.name); // Open the image popup
+  });
 
-    deleteButton.addEventListener('click', () => {
-      deleteCallback(cardElement);
-    });
-  
-    return cardElement;
-  }
+  deleteButton.addEventListener('click', () => {
+    deleteCallback(cardElement);
+  });
 
-  function removeCard(cardElement) {
-    cardElement.remove();
-  } 
+  return cardElement;
+}
 
-  function renderCards(cards) {
-    const cardList = document.querySelector('.places__list');
-  
-    cards.forEach(cardData => {
-      const cardElement = createCard(cardData, removeCard);
-      cardList.appendChild(cardElement);
-    });
-  }
-  
+function removeCard(cardElement) {
+  cardElement.remove();
+}
 
+function renderCards(cards) {
+  const cardList = document.querySelector('.places__list');
+
+  cards.forEach(cardData => {
+    const cardElement = createCard(cardData, removeCard);
+    cardList.appendChild(cardElement);
+  });
+}
+
+// Image popup handling
+const imagePopup = document.querySelector('.popup_type_image');
+const imageElement = imagePopup.querySelector('.popup__image');
+const imageCaption = imagePopup.querySelector('.popup__caption');
+
+// Function to open the image popup with the clicked image and caption
+function openImagePopup(imageSrc, imageAlt, captionText) {
+  imageElement.src = imageSrc; // Set the image source
+  imageElement.alt = imageAlt; // Set the alt text
+  imageCaption.textContent = captionText; // Set the caption text
+  openPopup(imagePopup); // Open the image popup
+}
+
+// Popup handling for edit and add popups
 const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
 const addButton = document.querySelector('.profile__add-button');
 const addPopup = document.querySelector('.popup_type_new-card');
-const likeButton = document.querySelector('.card__like-button');
 const closeButtons = document.querySelectorAll('.popup__close');
 
-
+// Function to open any popup
 function openPopup(popup) {
   popup.style.display = 'flex';
 }
 
+// Function to close any popup
 function closePopup(popup) {
   popup.style.display = 'none';
 }
 
+// Handle the opening of edit and add popups
 editButton.addEventListener('click', () => {
   openPopup(editPopup);
 });
@@ -58,16 +73,16 @@ addButton.addEventListener('click', () => {
   openPopup(addPopup);
 });
 
+// Close popups when close buttons are clicked
 closeButtons.forEach((button) => {
   button.addEventListener('click', (event) => {
-    const popup = event.target.closest('.popup'); 
-    closePopup(popup); 
+    const popup = event.target.closest('.popup');
+    closePopup(popup);
   });
 });
 
-  
-  
+// Render initial cards (assuming you have an array `initialCards`)
+renderCards(initialCards);
 
-  renderCards(initialCards);
 
   
