@@ -73,8 +73,18 @@ function closePopup(popup) {
   document.removeEventListener('keydown', closePopupOnEsc);
 }
 
+// Profile name and description elements
+const profileNameElement = document.querySelector('.profile__title'); // Элемент с именем
+const profileDescriptionElement = document.querySelector('.profile__description'); // Элемент с описанием
+const nameInput = document.querySelector('.popup__input_type_name'); // Поле "Имя"
+const descriptionInput = document.querySelector('.popup__input_type_description');
+const editForm = document.querySelector('.popup__form[name="edit-profile"]');
+
+
 // Handle the opening of edit and add popups
 editButton.addEventListener('click', () => {
+  nameInput.value = profileNameElement.textContent;
+  descriptionInput.value = profileDescriptionElement.textContent;
   openPopup(editPopup);
 });
 
@@ -98,6 +108,51 @@ function closePopupOnEsc(event) {
     }
   }
 }
+
+editForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // Предотвращаем стандартное поведение отправки формы
+  
+  // Обновляем информацию на странице
+  profileNameElement.textContent = nameInput.value;
+  profileDescriptionElement.textContent = descriptionInput.value;
+  
+  // Закрываем попап после сохранения
+  closePopup(editPopup);
+});
+
+const addCardForm = document.querySelector('.popup__form[name="new-place"]');
+
+// Поля ввода для имени и ссылки карточки
+const cardNameInput = document.querySelector('.popup__input_type_card-name');
+const cardLinkInput = document.querySelector('.popup__input_type_url');
+
+// Список карточек
+const cardList = document.querySelector('.places__list');
+
+// Функция добавления новой карточки в начало списка
+function addNewCard(cardData) {
+  const newCard = createCard(cardData, removeCard);
+  cardList.prepend(newCard); // Добавляем карточку в начало списка
+}
+
+addCardForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // Предотвращаем стандартное поведение формы
+  
+  // Создаем объект данных карточки из значений формы
+  const newCardData = {
+    name: cardNameInput.value,
+    link: cardLinkInput.value
+  };
+  
+  // Добавляем новую карточку в начало
+  addNewCard(newCardData);
+  
+  // Очищаем форму
+  addCardForm.reset();
+  
+  // Закрываем попап добавления карточки
+  closePopup(addPopup);
+});
 
 const popups = document.querySelectorAll('.popup'); // Select all popups
 popups.forEach((popup) => {
