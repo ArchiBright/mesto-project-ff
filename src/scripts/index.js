@@ -1,19 +1,3 @@
-import arkhyz from './images/card_1.jpg';
-import chelyabinskOblast from './images/card_2.jpg';
-import ivanovo from './images/card_3.jpg';
-import kamchatka from './images/card_4.jpg';
-import kholmogorskyRayon from './images/card_5.jpg';
-import baikal from './images/card_6.jpg';
-
-const initialCards = [
-  { name: "Архыз", link: arkhyz },
-  { name: "Челябинская область", link: chelyabinskOblast },
-  { name: "Иваново", link: ivanovo },
-  { name: "Камчатка", link: kamchatka },
-  { name: "Холмогорский район", link: kholmogorskyRayon },
-  { name: "Байкал", link: baikal }
-];
-
 function createCard(cardData, deleteCallback) {
   const template = document.querySelector('#card-template').content.cloneNode(true);
   const cardElement = template.querySelector('.card');
@@ -183,7 +167,6 @@ popups.forEach((popup) => {
 
 // Render initial cards (assuming you have an array `initialCards`)
 renderCards(initialCards);
-
 
 
   
