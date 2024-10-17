@@ -64,12 +64,14 @@ const closeButtons = document.querySelectorAll('.popup__close');
 // Function to open any popup
 function openPopup(popup) {
   popup.style.display = 'flex';
+  popup.classList.add('popup_is-opened');
   document.addEventListener('keydown', closePopupOnEsc);
 }
 
 // Function to close any popup
 function closePopup(popup) {
   popup.style.display = 'none';
+  popup.classList.remove('popup_is-opened');
   document.removeEventListener('keydown', closePopupOnEsc);
 }
 
