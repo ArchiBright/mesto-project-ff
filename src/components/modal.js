@@ -1,23 +1,31 @@
-// Function to open a modal window
-export function openModal(modal) {
-    modal.style.display = 'flex';
-    modal.classList.add('popup_is-opened');
-    document.addEventListener('keydown', closePopupOnEsc);
+export function openModal(popup) {
+    popup.classList.add('popup_is-opened'); 
+    document.addEventListener('keydown', closeModalOnEsc);
   }
   
-  // Function to close a modal window
-  export function closeModal(modal) {
-    modal.style.display = 'none';
-    modal.classList.remove('popup_is-opened');
-    document.removeEventListener('keydown', closePopupOnEsc);
+
+  export function closeModal(popup) {
+    popup.classList.remove('popup_is-opened'); 
+    document.removeEventListener('keydown', closeModalOnEsc);
   }
   
-  // Close modal by pressing "Escape"
-  function closePopupOnEsc(event) {
+
+  function closeModalOnEsc(event) {
     if (event.key === 'Escape') {
-      const openPopup = document.querySelector('.popup[style="display: flex;"]');
+      const openPopup = document.querySelector('.popup.popup_is-opened'); 
       if (openPopup) {
         closeModal(openPopup);
       }
     }
+  }
+  
+
+  export function addPopupListeners(popups) {
+    popups.forEach((popup) => {
+      popup.addEventListener('click', (event) => {
+        if (event.target === popup) { 
+          closeModal(popup);
+        }
+      });
+    });
   }

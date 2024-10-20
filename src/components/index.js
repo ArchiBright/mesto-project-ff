@@ -1,6 +1,5 @@
-// index.js
 import '../pages/index.css';
-import { createCard, removeCard } from './cards.js';
+import { createCard, removeCard, toggleLikeState } from './card.js';
 import { openModal, closeModal } from './modal.js';
 
 // Initial cards array
@@ -35,7 +34,7 @@ function openImagePopup(imageSrc, imageAlt, captionText) {
 // Rendering initial cards
 function renderCards(cards) {
   cards.forEach(cardData => {
-    const cardElement = createCard(cardData, removeCard, openImagePopup);
+    const cardElement = createCard(cardData, removeCard, openImagePopup, toggleLikeState);
     cardList.appendChild(cardElement);
   });
 }
@@ -57,12 +56,12 @@ addButton.addEventListener('click', () => {
 });
 
 // Closing modals
-closeButtons.forEach(button => {
-  button.addEventListener('click', (event) => {
-    const popup = event.target.closest('.popup');
-    closeModal(popup);
-  });
-});
+closeButtons.forEach(button => { 
+  const popup = button.closest('.popup');     
+  button.addEventListener('click', () => { 
+    closeModal(popup); 
+  }); 
+}); 
 
 // Form handling for editing profile
 const editForm = document.querySelector('.popup__form[name="edit-profile"]');
@@ -89,7 +88,7 @@ addCardForm.addEventListener('submit', (event) => {
     name: cardNameInput.value,
     link: cardLinkInput.value
   };
-  const newCard = createCard(newCardData, removeCard, openImagePopup);
+  const newCard = createCard(newCardData, removeCard, openImagePopup, toggleLikeState);
   cardList.prepend(newCard);
   addCardForm.reset();
   closeModal(addPopup);
