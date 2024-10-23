@@ -11,15 +11,23 @@ export function createCard(cardData, deleteCallback, openImagePopup, likeCallbac
   const cardTitle = template.querySelector('.card__title');
   const deleteButton = template.querySelector('.card__delete-button');
   const likeButton = template.querySelector('.card__like-button');
+  const likeCounter = cardElement.querySelector('.place__like-counter');
   
   cardTitle.textContent = cardData.name;
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
+  // likeCounter.textContent = cardData.likes.length;
+
 
   // Event listener for image click to open image popup
   cardImage.addEventListener('click', () => {
     openImagePopup(cardData.link, cardData.name, cardData.name); 
   });
+  // if (cardData.owner._id !== currentUserId) {
+  //   deleteButton.remove(); // Удаление кнопки, если карточка создана не текущим пользователем
+  // } else {
+  //   deleteButton.addEventListener('click', () => removeCardCallback(cardData._id, cardElement));
+  // }
 
   // Event listener for deleting a card
   deleteButton.addEventListener('click', () => {

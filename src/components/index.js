@@ -4,6 +4,8 @@ import { openModal, closeModal } from './modal.js';
 import { enableValidation, clearValidation } from './validation.js';
 import { getUserInfo, getInitialCards, updateUserInfo, addNewCard } from './api.js';  // Импорт валидации
 
+
+let currentUserId;
 // DOM elements
 const profileImage = document.querySelector('.profile__image');
 profileImage.style.backgroundImage = `url(${require('../images/avatar.jpg')})`;
@@ -26,13 +28,14 @@ function openImagePopup(imageSrc, imageAlt, captionText) {
 // Rendering initial cards
 function renderCards(cards) {
   cards.forEach(cardData => {
-    const cardElement = createCard(cardData, removeCard, openImagePopup, toggleLikeState);
+    const cardElement = createCard(cardData, removeCard, openImagePopup, toggleLikeState, currentUserId);
     cardList.appendChild(cardElement);
   });
 }
 
 getUserInfo()
   .then(userData => {
+    currentUserId = userData._id;
     document.querySelector('.profile__title').textContent = userData.name;
     document.querySelector('.profile__description').textContent = userData.about;
     profileImage.style.backgroundImage = `url(${userData.avatar})`;
