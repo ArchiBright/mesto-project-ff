@@ -1,8 +1,8 @@
 import '../pages/index.css';
-import { createCard, removeCard, toggleLikeState, } from './card.js';
-import {initialCards} from './cards.js';
+import { createCard, removeCard, toggleLikeState } from './card.js';
 import { openModal, closeModal } from './modal.js';
-
+import { initialCards } from './cards.js';
+import { enableValidation, clearValidation } from './validation.js';  // Импорт валидации
 
 // DOM elements
 const profileImage = document.querySelector('.profile__image');
@@ -38,12 +38,17 @@ const addButton = document.querySelector('.profile__add-button');
 const addPopup = document.querySelector('.popup_type_new-card');
 const closeButtons = document.querySelectorAll('.popup__close');
 
-// Opening modals
+// Opening modals with validation reset
 editButton.addEventListener('click', () => {
+  nameInput.value = profileNameElement.textContent;
+  descriptionInput.value = profileDescriptionElement.textContent;
+  clearValidation(editForm, validationConfig);  // Очистка ошибок валидации
   openModal(editPopup);
 });
 
 addButton.addEventListener('click', () => {
+  addCardForm.reset();  // Сброс формы
+  clearValidation(addCardForm, validationConfig);  // Очистка ошибок валидации
   openModal(addPopup);
 });
 
@@ -82,7 +87,7 @@ addCardForm.addEventListener('submit', (event) => {
   };
   const newCard = createCard(newCardData, removeCard, openImagePopup, toggleLikeState);
   cardList.prepend(newCard);
-  addCardForm.reset();
+  addCardForm.reset();  // Сброс формы после добавления карточки
   closeModal(addPopup);
 });
 
@@ -98,3 +103,16 @@ popups.forEach(popup => {
     }
   });
 });
+
+// Конфиг для валидации
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
+
+// Включение валидации для всех форм
+enableValidation(validationConfig);
