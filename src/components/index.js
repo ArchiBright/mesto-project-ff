@@ -1,8 +1,8 @@
 import '../pages/index.css';
 import { createCard, removeCard, toggleLikeState } from './card.js';
 import { openModal, closeModal } from './modal.js';
-import { initialCards } from './cards.js';
-import { enableValidation, clearValidation } from './validation.js';  // Импорт валидации
+import { enableValidation, clearValidation } from './validation.js';
+import { getUserInfo, getInitialCards, updateUserInfo, addNewCard } from './api.js';  // Импорт валидации
 
 // DOM elements
 const profileImage = document.querySelector('.profile__image');
@@ -30,6 +30,20 @@ function renderCards(cards) {
     cardList.appendChild(cardElement);
   });
 }
+
+getUserInfo()
+  .then(userData => {
+    document.querySelector('.profile__title').textContent = userData.name;
+    document.querySelector('.profile__description').textContent = userData.about;
+    profileImage.style.backgroundImage = `url(${userData.avatar})`;
+  })
+  .catch(err => console.log(err));
+
+getInitialCards()
+  .then(cards => {
+    renderCards(cards);
+  })
+  .catch(err => console.log(err));
 
 // Opening and closing modals
 const editButton = document.querySelector('.profile__edit-button');
@@ -69,9 +83,13 @@ const descriptionInput = document.querySelector('.popup__input_type_description'
 
 editForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  profileNameElement.textContent = nameInput.value;
-  profileDescriptionElement.textContent = descriptionInput.value;
-  closeModal(editPopup);
+  updateUserInfo(nameInput.value, descriptionInput.value)
+    .then(userData => {
+      document.querySelector('.profile__title').textContent = userData.name;
+      document.querySelector('.profile__description').textContent = userData.about;
+      closeModal(editPopup);
+    })
+    .catch(err => console.log(err));
 });
 
 // Form handling for adding new cards
@@ -81,18 +99,15 @@ const cardLinkInput = document.querySelector('.popup__input_type_url');
 
 addCardForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  const newCardData = {
-    name: cardNameInput.value,
-    link: cardLinkInput.value
-  };
-  const newCard = createCard(newCardData, removeCard, openImagePopup, toggleLikeState);
-  cardList.prepend(newCard);
-  addCardForm.reset();  // Сброс формы после добавления карточки
-  closeModal(addPopup);
+  addNewCard(cardNameInput.value, cardLinkInput.value)
+    .then(cardData => {
+      const newCard = createCard(cardData, removeCard, openImagePopup, toggleLikeState);
+      cardList.prepend(newCard);
+      addCardForm.reset();
+      closeModal(addPopup);
+    })
+    .catch(err => console.log(err));
 });
-
-// Render the initial cards
-renderCards(initialCards);
 
 // Close popups on overlay click
 const popups = document.querySelectorAll('.popup');
