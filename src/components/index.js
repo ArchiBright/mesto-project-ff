@@ -2,7 +2,7 @@ import '../pages/index.css';
 import { createCard, removeCard, toggleLikeState } from './card.js';
 import { openModal, closeModal } from './modal.js';
 import { enableValidation, clearValidation } from './validation.js';
-import { getUserInfo, getInitialCards, updateUserInfo, addNewCard } from './api.js';  // Импорт валидации
+import { getUserInfo, getInitialCards, updateUserInfo, addNewCard, updateProfilePicture } from './api.js';  // Импорт валидации
 
 
 let currentUserId;
@@ -53,6 +53,7 @@ const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
 const addButton = document.querySelector('.profile__add-button');
 const addPopup = document.querySelector('.popup_type_new-card');
+const avatarPopup = document.querySelector('.popup_type_avatar');
 const closeButtons = document.querySelectorAll('.popup__close');
 
 // Opening modals with validation reset
@@ -67,6 +68,12 @@ addButton.addEventListener('click', () => {
   addCardForm.reset();  // Сброс формы
   clearValidation(addCardForm, validationConfig);  // Очистка ошибок валидации
   openModal(addPopup);
+});
+
+profileImage.addEventListener('click', () => {
+  addCardForm.reset();  // Сброс формы
+  clearValidation(addCardForm, validationConfig);  // Очистка ошибок валидации
+  openModal(avatarPopup);
 });
 
 // Closing modals
@@ -108,6 +115,20 @@ addCardForm.addEventListener('submit', (event) => {
       cardList.prepend(newCard);
       addCardForm.reset();
       closeModal(addPopup);
+    })
+    .catch(err => console.log(err));
+});
+
+// Form handling for updating profile picture
+const avatarForm = document.querySelector('.popup__form[name="avatar"]');
+const avatarLinkInput = document.querySelector('.popup__input_type_url-avatar');
+
+avatarForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  updateProfilePicture(avatarLinkInput.value)
+    .then(userData => {
+      profileImage.style.backgroundImage = `url(${userData.avatar})`;
+      closeModal(avatarPopup);
     })
     .catch(err => console.log(err));
 });
