@@ -1,4 +1,5 @@
 import { getUserInfo } from "./api";
+import { openModal } from "./modal";
 
 // Function to toggle like state
 export function toggleLikeState(likeButton) {
@@ -14,6 +15,7 @@ export function createCard(cardData, deleteCallback, openImagePopup, likeCallbac
   const deleteButton = template.querySelector('.card__delete-button');
   const likeButton = template.querySelector('.card__like-button');
   const likeCounter = cardElement.querySelector('.place__like-counter');
+  const deletePopup = document.querySelector('.popup_type_delete');
 
   cardTitle.textContent = cardData.name;
   cardImage.src = cardData.link;
@@ -33,10 +35,10 @@ export function createCard(cardData, deleteCallback, openImagePopup, likeCallbac
       // Check if the current user is the owner of the card
       if (cardData.owner._id !== currentUserId) {
         deleteButton.remove(); // Remove delete button if the current user is not the owner
-        console.log(`Owner of card: ${cardData.owner._id}`);
-        console.log(`Current user!: ${currentUserId}`);
       } else {
-        deleteButton.addEventListener('click', () => deleteCallback(cardElement)); // Assign delete handler
+        deleteButton.addEventListener('click', () => {
+          openModal(deletePopup);
+        }); // Assign delete handler
       }
     })
     .catch(err => {
