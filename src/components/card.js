@@ -1,4 +1,4 @@
-import { getUserInfo, deleteCard } from "./api";
+import { getUserInfo, deleteCard, toggleLike } from "./api";
 import { openModal, closeModal } from "./modal";
 
 // Function to toggle like state
@@ -14,7 +14,7 @@ export function createCard(cardData, deleteCallback, openImagePopup, likeCallbac
   const cardTitle = template.querySelector('.card__title');
   const deleteButton = template.querySelector('.card__delete-button');
   const likeButton = template.querySelector('.card__like-button');
-  const likeCounter = cardElement.querySelector('.place__like-counter');
+  const likeCounter = cardElement.querySelector('.card__like-counter');
   const deletePopup = document.querySelector('.popup_type_delete');
   const deleteConfirmButton = deletePopup.querySelector('.popup__button_type_confirm');
 
@@ -30,31 +30,50 @@ export function createCard(cardData, deleteCallback, openImagePopup, likeCallbac
 
   // Fetch current user info and only after that decide whether to show the delete button
   getUserInfo()
-    .then(userData => {
-      const currentUserId = userData._id;
+  .then(userData => {
+    const currentUserId = userData._id;
 
-      // Check if the current user is the owner of the card
-      if (cardData.owner._id !== currentUserId) {
-        deleteButton.remove(); // Remove delete button if the current user is not the owner
-      } else {
-        deleteButton.addEventListener('click', () => {
-          openModal(deletePopup);
-          deleteConfirmButton.addEventListener('click', () => {
-            deleteCard(cardData._id)
-              .then(() => {
-                deleteCallback(cardElement);
-                closeModal(deletePopup);
-              })
-              .catch(err => {
-                console.log(err);
-              });
-          });
-        }); // Assign delete handler
-      }
-    })
-    .catch(err => {
-      console.log(err);
-    });
+    // Check if the current user is the owner of the card
+    if (cardData.owner._id !== currentUserId) {
+      deleteButton.remove(); // Remove delete button if the current user is not the owner
+    } else {
+      deleteButton.addEventListener('click', () => {
+        openModal(deletePopup);
+        deleteConfirmButton.addEventListener('click', () => {
+          deleteCard(cardData._id)
+            .then(() => {
+              deleteCallback(cardElement);
+              closeModal(deletePopup);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        });
+      });
+    }
+
+    // Check if the current user has liked the card
+    const userHasLiked = cardData.likes.some(like => like._id === currentUserId);
+
+    // Call toggleLike function with card ID and userHasLiked status
+    toggleLike(cardData._id, userHasLiked)
+      .then(cardInfo => {
+        likeCounter.textContent = cardInfo.likes.length;
+
+        // Update like button state based on new data
+        if (cardInfo.likes.some(like => like._id === currentUserId)) {
+          likeButton.classList.add('card__like-button_is-active');
+        } else {
+          likeButton.classList.remove('card__like-button_is-active');
+        }
+      })
+      .catch(err => {
+        console.log("Failed to toggle like:", err);
+      });
+  })
+  .catch(err => {
+    console.log("Failed to get user info:", err);
+  });
 
   // Event listener for liking a card
   likeButton.addEventListener('click', () => {

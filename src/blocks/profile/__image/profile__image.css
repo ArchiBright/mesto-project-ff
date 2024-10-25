@@ -26,12 +26,14 @@
 
 .profile__image:hover::before {
   opacity: 1; /* Show icon on hover */
+  z-index: 3;
 }
 
 .profile__image:hover {
   cursor: pointer;
   background-color:  #C4C4C4;
-  opacity: 0.5; /* Semi-transparent background on hover */
+  opacity: 0.5;
+  z-index: 1;
 }
 
 @media screen and (max-width: 740px) {

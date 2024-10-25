@@ -76,3 +76,11 @@ const config = {
     })
     .then(checkResponse);
   };
+
+    export const toggleLike = (cardId, isLiked) => {
+        return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+        method: isLiked ? 'DELETE' : 'PUT',
+        headers: config.headers
+        })
+        .then(checkResponse);
+    };
