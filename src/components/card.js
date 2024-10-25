@@ -1,5 +1,5 @@
-import { getUserInfo } from "./api";
-import { openModal } from "./modal";
+import { getUserInfo, deleteCard } from "./api";
+import { openModal, closeModal } from "./modal";
 
 // Function to toggle like state
 export function toggleLikeState(likeButton) {
@@ -16,6 +16,7 @@ export function createCard(cardData, deleteCallback, openImagePopup, likeCallbac
   const likeButton = template.querySelector('.card__like-button');
   const likeCounter = cardElement.querySelector('.place__like-counter');
   const deletePopup = document.querySelector('.popup_type_delete');
+  const deleteConfirmButton = deletePopup.querySelector('.popup__button_type_confirm');
 
   cardTitle.textContent = cardData.name;
   cardImage.src = cardData.link;
@@ -38,6 +39,16 @@ export function createCard(cardData, deleteCallback, openImagePopup, likeCallbac
       } else {
         deleteButton.addEventListener('click', () => {
           openModal(deletePopup);
+          deleteConfirmButton.addEventListener('click', () => {
+            deleteCard(cardData._id)
+              .then(() => {
+                deleteCallback(cardElement);
+                closeModal(deletePopup);
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          });
         }); // Assign delete handler
       }
     })
