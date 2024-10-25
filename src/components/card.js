@@ -1,3 +1,5 @@
+import { getUserInfo } from "./api";
+
 // Function to toggle like state
 export function toggleLikeState(likeButton) {
   likeButton.classList.toggle('card__like-button_is-active');
@@ -12,27 +14,34 @@ export function createCard(cardData, deleteCallback, openImagePopup, likeCallbac
   const deleteButton = template.querySelector('.card__delete-button');
   const likeButton = template.querySelector('.card__like-button');
   const likeCounter = cardElement.querySelector('.place__like-counter');
-  
+
   cardTitle.textContent = cardData.name;
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
   // likeCounter.textContent = cardData.likes.length;
 
-
   // Event listener for image click to open image popup
   cardImage.addEventListener('click', () => {
     openImagePopup(cardData.link, cardData.name, cardData.name); 
   });
-  // if (cardData.owner._id !== currentUserId) {
-  //   deleteButton.remove(); // Удаление кнопки, если карточка создана не текущим пользователем
-  // } else {
-  //   deleteButton.addEventListener('click', () => removeCardCallback(cardData._id, cardElement));
-  // }
 
-  // Event listener for deleting a card
-  deleteButton.addEventListener('click', () => {
-    deleteCallback(cardElement);
-  });
+  // Fetch current user info and only after that decide whether to show the delete button
+  getUserInfo()
+    .then(userData => {
+      const currentUserId = userData._id;
+
+      // Check if the current user is the owner of the card
+      if (cardData.owner._id !== currentUserId) {
+        deleteButton.remove(); // Remove delete button if the current user is not the owner
+        console.log(`Owner of card: ${cardData.owner._id}`);
+        console.log(`Current user!: ${currentUserId}`);
+      } else {
+        deleteButton.addEventListener('click', () => deleteCallback(cardElement)); // Assign delete handler
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    });
 
   // Event listener for liking a card
   likeButton.addEventListener('click', () => {
