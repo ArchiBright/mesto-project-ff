@@ -55,6 +55,7 @@ const addButton = document.querySelector('.profile__add-button');
 const addPopup = document.querySelector('.popup_type_new-card');
 const avatarPopup = document.querySelector('.popup_type_avatar');
 const closeButtons = document.querySelectorAll('.popup__close');
+const popupButton = document.querySelector('.popup__button');
 
 // Opening modals with validation reset
 editButton.addEventListener('click', () => {
@@ -97,6 +98,7 @@ editForm.addEventListener('submit', (event) => {
     .then(userData => {
       document.querySelector('.profile__title').textContent = userData.name;
       document.querySelector('.profile__description').textContent = userData.about;
+      renderLoading(true);
       closeModal(editPopup);
     })
     .catch(err => console.log(err));
@@ -114,6 +116,7 @@ addCardForm.addEventListener('submit', (event) => {
       const newCard = createCard(cardData, removeCard, openImagePopup, toggleLikeState);
       cardList.prepend(newCard);
       addCardForm.reset();
+      renderLoading(true);
       closeModal(addPopup);
     })
     .catch(err => console.log(err));
@@ -128,6 +131,7 @@ avatarForm.addEventListener('submit', (event) => {
   updateProfilePicture(avatarLinkInput.value)
     .then(userData => {
       profileImage.style.backgroundImage = `url(${userData.avatar})`;
+      renderLoading(true);
       closeModal(avatarPopup);
     })
     .catch(err => console.log(err));
@@ -142,6 +146,10 @@ popups.forEach(popup => {
     }
   });
 });
+
+function renderLoading(isLoading) {
+  popupButton.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
+}
 
 // Конфиг для валидации
 const validationConfig = {

@@ -1,0 +1,11 @@
+.card__like-place {
+    display: flex;
+    gap: 3px;
+    flex-direction: column;
+    font-size: 13px;
+    align-items: center;
+}
+
+.card__like-place > p {
+    margin: 0;
+}
