@@ -5,7 +5,7 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
-  position: relative; /* Required for positioning the pseudo-element */
+  position: relative;
 }
 
 .profile__image::before {
@@ -17,23 +17,36 @@
   height: 100%;
   border-radius: 50%;
   background-image: url(../../../images/Vector.svg);
-  background-size: 26px 26px; /* Set size of the icon */
+  background-size: 26px 26px; 
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0; /* Initially hidden */
-  transition: opacity 0.3s ease; /* Smooth transition */
-}
-
-.profile__image:hover::before {
-  opacity: 1; /* Show icon on hover */
+  opacity: 0; 
+  transition: opacity 0.3s ease; 
   z-index: 3;
 }
 
-.profile__image:hover {
+.profile__image:hover::before {
+  opacity: 1; 
+  z-index: 3;
+}
+
+.profile__image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  z-index: 2;
+  opacity: 0; 
+  background-color: rgba(0, 0, 0, 0.3); 
+  transition: opacity 0.3s ease;
+}
+
+.profile__image:hover::after {
+  opacity: 1; 
   cursor: pointer;
-  background-color:  #C4C4C4;
-  opacity: 0.5;
-  z-index: 1;
 }
 
 @media screen and (max-width: 740px) {
