@@ -29,4 +29,4 @@
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/ваш-профиль/mesto.git
+   git clone git@github.com:ArchiBright/mesto-project-ff.git
