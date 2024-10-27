@@ -28,7 +28,7 @@ function openImagePopup(imageSrc, imageAlt, captionText) {
 // Rendering initial cards
 function renderCards(cards) {
   cards.forEach(cardData => {
-    const cardElement = createCard(cardData, removeCard, openImagePopup, handleToggleLike);
+    const cardElement = createCard(cardData, removeCard, openImagePopup, handleToggleLike, currentUserId);
     cardList.appendChild(cardElement);
   });
 }
@@ -113,7 +113,7 @@ addCardForm.addEventListener('submit', (event) => {
   event.preventDefault();
   addNewCard(cardNameInput.value, cardLinkInput.value)
     .then(cardData => {
-      const newCard = createCard(cardData, removeCard, openImagePopup, toggleLikeState);
+      const newCard = createCard(cardData, removeCard, openImagePopup, toggleLikeState, currentUserId);
       cardList.prepend(newCard);
       addCardForm.reset();
       renderLoading(true);

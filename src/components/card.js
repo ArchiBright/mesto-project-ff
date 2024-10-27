@@ -21,7 +21,7 @@ export function handleToggleLike(cardData, currentUserId, likeCounter, likeButto
 }
 
 // Function to create a card
-export function createCard(cardData, deleteCallback, openImagePopup, toggleLikeCallback) {
+export function createCard(cardData, deleteCallback, openImagePopup, toggleLikeCallback, currentUserId) {
   const template = document.querySelector('#card-template').content.cloneNode(true);
   const cardElement = template.querySelector('.card');
   const cardImage = template.querySelector('.card__image');
@@ -43,43 +43,36 @@ export function createCard(cardData, deleteCallback, openImagePopup, toggleLikeC
 
   // Adding the click callback to the card element if provided
 
-  getUserInfo()
-    .then(userData => {
-      const currentUserId = userData._id;
-
-      if (cardData.owner._id !== currentUserId) {
-        deleteButton.remove();
-      } else {
-        deleteButton.addEventListener('click', () => {
-          openModal(deletePopup);
-          deleteConfirmButton.addEventListener('click', () => {
-            deleteCard(cardData._id)
-              .then(() => {
-                deleteCallback(cardElement);
-                closeModal(deletePopup);
-              })
-              .catch(err => {
-                console.log("Failed to delete card:", err);
-              });
+  if (cardData.owner._id !== currentUserId) {
+    deleteButton.remove();
+  } else {
+    deleteButton.addEventListener('click', () => {
+      openModal(deletePopup);
+      deleteConfirmButton.addEventListener('click', () => {
+        deleteCard(cardData._id)
+          .then(() => {
+            deleteCallback(cardElement);
+            closeModal(deletePopup);
+          })
+          .catch(err => {
+            console.log("Failed to delete card:", err);
           });
-        });
-      }
-
-      const userHasLiked = cardData.likes.some(like => like._id === currentUserId);
-      likeCounter.textContent = cardData.likes.length;
-
-      if (userHasLiked) {
-        likeButton.classList.add('card__like-button_is-active');
-      }
-
-      // Using handleToggleLike as a universal callback for the like button
-      likeButton.addEventListener('click', () => {
-        toggleLikeCallback(cardData, currentUserId, likeCounter, likeButton);
       });
-    })
-    .catch(err => {
-      console.log("Failed to get user info:", err);
     });
+  }
+
+  // Set like status based on current user's likes
+  const userHasLiked = cardData.likes.some(like => like._id === currentUserId);
+  likeCounter.textContent = cardData.likes.length;
+
+  if (userHasLiked) {
+    likeButton.classList.add('card__like-button_is-active');
+  }
+
+  // Using handleToggleLike as a universal callback for the like button
+  likeButton.addEventListener('click', () => {
+    toggleLikeCallback(cardData, currentUserId, likeCounter, likeButton);
+  });
 
   return cardElement;
 }
