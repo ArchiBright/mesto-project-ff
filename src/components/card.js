@@ -1,8 +1,27 @@
-import { getUserInfo, deleteCard, toggleLike } from "./api";
+import { getUserInfo, deleteCard, toggleLike as apiToggleLike } from "./api";
 import { openModal, closeModal } from "./modal";
 
+// Universal like toggle function
+export function handleToggleLike(cardData, currentUserId, likeCounter, likeButton) {
+  const isLiked = likeButton.classList.contains('card__like-button_is-active');
+
+  apiToggleLike(cardData._id, isLiked)
+    .then(cardInfo => {
+      likeCounter.textContent = cardInfo.likes.length;
+      
+      if (cardInfo.likes.some(like => like._id === currentUserId)) {
+        likeButton.classList.add('card__like-button_is-active');
+      } else {
+        likeButton.classList.remove('card__like-button_is-active');
+      }
+    })
+    .catch(err => {
+      console.log("Failed to toggle like:", err);
+    });
+}
+
 // Function to create a card
-export function createCard(cardData, deleteCallback, openImagePopup) {
+export function createCard(cardData, deleteCallback, openImagePopup, toggleLikeCallback) {
   const template = document.querySelector('#card-template').content.cloneNode(true);
   const cardElement = template.querySelector('.card');
   const cardImage = template.querySelector('.card__image');
@@ -22,14 +41,14 @@ export function createCard(cardData, deleteCallback, openImagePopup) {
     openImagePopup(cardData.link, cardData.name, cardData.name); 
   });
 
-  // Fetch current user info and only after that decide whether to show the delete button
+  // Adding the click callback to the card element if provided
+
   getUserInfo()
     .then(userData => {
       const currentUserId = userData._id;
 
-      // Check if the current user is the owner of the card
       if (cardData.owner._id !== currentUserId) {
-        deleteButton.remove(); // Remove delete button if the current user is not the owner
+        deleteButton.remove();
       } else {
         deleteButton.addEventListener('click', () => {
           openModal(deletePopup);
@@ -46,32 +65,16 @@ export function createCard(cardData, deleteCallback, openImagePopup) {
         });
       }
 
-      // Check if the current user has liked the card and set the initial like state
       const userHasLiked = cardData.likes.some(like => like._id === currentUserId);
       likeCounter.textContent = cardData.likes.length;
-      
+
       if (userHasLiked) {
         likeButton.classList.add('card__like-button_is-active');
       }
 
-      // Event listener for toggling like state
+      // Using handleToggleLike as a universal callback for the like button
       likeButton.addEventListener('click', () => {
-        const isLiked = likeButton.classList.contains('card__like-button_is-active');
-        
-        toggleLike(cardData._id, isLiked)
-          .then(cardInfo => {
-            // Update like counter and like button state based on new data
-            likeCounter.textContent = cardInfo.likes.length;
-            
-            if (cardInfo.likes.some(like => like._id === currentUserId)) {
-              likeButton.classList.add('card__like-button_is-active');
-            } else {
-              likeButton.classList.remove('card__like-button_is-active');
-            }
-          })
-          .catch(err => {
-            console.log("Failed to toggle like:", err);
-          });
+        toggleLikeCallback(cardData, currentUserId, likeCounter, likeButton);
       });
     })
     .catch(err => {

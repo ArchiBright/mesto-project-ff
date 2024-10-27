@@ -1,5 +1,5 @@
 import '../pages/index.css';
-import { createCard, removeCard } from './card.js';
+import { createCard, removeCard, handleToggleLike } from './card.js';
 import { openModal, closeModal } from './modal.js';
 import { enableValidation, clearValidation } from './validation.js';
 import { getUserInfo, getInitialCards, updateUserInfo, addNewCard, updateProfilePicture } from './api.js';  // Импорт валидации
@@ -28,7 +28,7 @@ function openImagePopup(imageSrc, imageAlt, captionText) {
 // Rendering initial cards
 function renderCards(cards) {
   cards.forEach(cardData => {
-    const cardElement = createCard(cardData, removeCard, openImagePopup, currentUserId);
+    const cardElement = createCard(cardData, removeCard, openImagePopup, handleToggleLike);
     cardList.appendChild(cardElement);
   });
 }

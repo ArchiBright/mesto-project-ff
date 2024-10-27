@@ -2,7 +2,7 @@
 
 **Проектная работа, выполненная студентом Яндекс.Практикума**
 
-[Посмотреть проект](https://archibright.github.io/mesto-project-ff)
+[Посмотреть проект](https://ArchiBright.github.io/mesto-project-ff)
 
 ## Описание проекта
 
