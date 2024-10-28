@@ -24,7 +24,8 @@ function openImagePopup(imageSrc, imageAlt, captionText) {
   openModal(imagePopup);
 }
 
-// Function to set up the delete button functionality
+let cardToDelete = null; // Global variable to store the card element to delete
+
 function setupDeleteButton(deleteButton, cardData, cardElement) {
   const deletePopup = document.querySelector('.popup_type_delete');
   const deleteConfirmButton = deletePopup.querySelector('.popup__button_type_confirm');
@@ -34,17 +35,30 @@ function setupDeleteButton(deleteButton, cardData, cardElement) {
   } else {
     deleteButton.addEventListener('click', () => {
       openModal(deletePopup);
-      deleteConfirmButton.addEventListener('click', () => {
-        deleteCard(cardData._id)
-          .then(() => {
-            removeCard(cardElement);
-            closeModal(deletePopup);
-          })
-          .catch(err => console.log("Failed to delete card:", err));
-      }, { once: true });  // Ensure event listener is only called once
+
+      // Set the current card to delete
+      cardToDelete = { cardElement, cardId: cardData._id };
     });
   }
 }
+
+// Add event listener once to handle all deletions
+const deletePopup = document.querySelector('.popup_type_delete');
+const deleteConfirmButton = deletePopup.querySelector('.popup__button_type_confirm');
+
+deleteConfirmButton.addEventListener('click', () => {
+  if (cardToDelete) {
+    deleteCard(cardToDelete.cardId)
+      .then(() => {
+        removeCard(cardToDelete.cardElement);
+        closeModal(deletePopup);
+      })
+      .catch(err => console.log("Failed to delete card:", err))
+      .finally(() => {
+        cardToDelete = null; // Reset after deletion
+      });
+  }
+});
 
 // Rendering initial cards
 function renderCards(cards) {
