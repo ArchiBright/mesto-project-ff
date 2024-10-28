@@ -64,21 +64,6 @@ Promise.all([getUserInfo(), getInitialCards()])
   })
   .catch(err => console.log(err));
 
-// getUserInfo()
-//   .then(userData => {
-//     currentUserId = userData._id;
-//     document.querySelector('.profile__title').textContent = userData.name;
-//     document.querySelector('.profile__description').textContent = userData.about;
-//     profileImage.style.backgroundImage = `url(${userData.avatar})`;
-//   })
-//   .catch(err => console.log(err));
-
-// getInitialCards()
-//   .then(cards => {
-//     renderCards(cards);
-//   })
-//   .catch(err => console.log(err));
-
 // Opening and closing modals
 const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
