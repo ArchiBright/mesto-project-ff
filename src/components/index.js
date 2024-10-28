@@ -113,7 +113,7 @@ addCardForm.addEventListener('submit', (event) => {
   event.preventDefault();
   addNewCard(cardNameInput.value, cardLinkInput.value)
     .then(cardData => {
-      const newCard = createCard(cardData, removeCard, openImagePopup, toggleLikeState, currentUserId);
+      const newCard = createCard(cardData, removeCard, openImagePopup, handleToggleLike, currentUserId);
       cardList.prepend(newCard);
       addCardForm.reset();
       renderLoading(true);
