@@ -2,8 +2,7 @@ import '../pages/index.css';
 import { createCard, removeCard, handleToggleLike } from './card.js';
 import { openModal, closeModal } from './modal.js';
 import { enableValidation, clearValidation } from './validation.js';
-import { getUserInfo, getInitialCards, updateUserInfo, addNewCard, updateProfilePicture } from './api.js';  // Импорт валидации
-
+import { getUserInfo, getInitialCards, updateUserInfo, addNewCard, updateProfilePicture, deleteCard } from './api.js';
 
 let currentUserId;
 // DOM elements
@@ -25,10 +24,32 @@ function openImagePopup(imageSrc, imageAlt, captionText) {
   openModal(imagePopup);
 }
 
+// Function to set up the delete button functionality
+function setupDeleteButton(deleteButton, cardData, cardElement) {
+  const deletePopup = document.querySelector('.popup_type_delete');
+  const deleteConfirmButton = deletePopup.querySelector('.popup__button_type_confirm');
+
+  if (cardData.owner._id !== currentUserId) {
+    deleteButton.remove();
+  } else {
+    deleteButton.addEventListener('click', () => {
+      openModal(deletePopup);
+      deleteConfirmButton.addEventListener('click', () => {
+        deleteCard(cardData._id)
+          .then(() => {
+            removeCard(cardElement);
+            closeModal(deletePopup);
+          })
+          .catch(err => console.log("Failed to delete card:", err));
+      }, { once: true });  // Ensure event listener is only called once
+    });
+  }
+}
+
 // Rendering initial cards
 function renderCards(cards) {
   cards.forEach(cardData => {
-    const cardElement = createCard(cardData, removeCard, openImagePopup, handleToggleLike, currentUserId);
+    const cardElement = createCard(cardData, setupDeleteButton, openImagePopup, handleToggleLike, currentUserId);
     cardList.appendChild(cardElement);
   });
 }
@@ -61,19 +82,19 @@ const popupButton = document.querySelector('.popup__button');
 editButton.addEventListener('click', () => {
   nameInput.value = profileNameElement.textContent;
   descriptionInput.value = profileDescriptionElement.textContent;
-  clearValidation(editForm, validationConfig);  // Очистка ошибок валидации
+  clearValidation(editForm, validationConfig);  // Clear validation errors
   openModal(editPopup);
 });
 
 addButton.addEventListener('click', () => {
-  addCardForm.reset();  // Сброс формы
-  clearValidation(addCardForm, validationConfig);  // Очистка ошибок валидации
+  addCardForm.reset();  // Reset form
+  clearValidation(addCardForm, validationConfig);  // Clear validation errors
   openModal(addPopup);
 });
 
 profileImage.addEventListener('click', () => {
-  addCardForm.reset();  // Сброс формы
-  clearValidation(addCardForm, validationConfig);  // Очистка ошибок валидации
+  avatarForm.reset();  // Reset form
+  clearValidation(avatarForm, validationConfig);  // Clear validation errors
   openModal(avatarPopup);
 });
 
@@ -96,8 +117,8 @@ editForm.addEventListener('submit', (event) => {
   event.preventDefault();
   updateUserInfo(nameInput.value, descriptionInput.value)
     .then(userData => {
-      document.querySelector('.profile__title').textContent = userData.name;
-      document.querySelector('.profile__description').textContent = userData.about;
+      profileNameElement.textContent = userData.name;
+      profileDescriptionElement.textContent = userData.about;
       renderLoading(true);
       closeModal(editPopup);
     })
@@ -113,7 +134,7 @@ addCardForm.addEventListener('submit', (event) => {
   event.preventDefault();
   addNewCard(cardNameInput.value, cardLinkInput.value)
     .then(cardData => {
-      const newCard = createCard(cardData, removeCard, openImagePopup, handleToggleLike, currentUserId);
+      const newCard = createCard(cardData, setupDeleteButton, openImagePopup, handleToggleLike, currentUserId);
       cardList.prepend(newCard);
       addCardForm.reset();
       renderLoading(true);
@@ -151,7 +172,7 @@ function renderLoading(isLoading) {
   popupButton.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
 }
 
-// Конфиг для валидации
+// Validation configuration
 const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -161,5 +182,5 @@ const validationConfig = {
   errorClass: 'popup__error_visible'
 };
 
-// Включение валидации для всех форм
+// Enable validation for all forms
 enableValidation(validationConfig);
