@@ -5,18 +5,13 @@ import { enableValidation, clearValidation } from './validation.js';
 import { getUserInfo, getInitialCards, updateUserInfo, addNewCard, updateProfilePicture, deleteCard } from './api.js';
 
 let currentUserId;
-// DOM elements
 const profileImage = document.querySelector('.profile__image');
 profileImage.style.backgroundImage = `url(${require('../images/avatar.jpg')})`;
-
 const cardList = document.querySelector('.places__list');
-
-// Image popup handling
 const imagePopup = document.querySelector('.popup_type_image');
 const imageElement = imagePopup.querySelector('.popup__image');
 const imageCaption = imagePopup.querySelector('.popup__caption');
 
-// Function to open the image popup
 function openImagePopup(imageSrc, imageAlt, captionText) {
   imageElement.src = imageSrc;
   imageElement.alt = imageAlt;
@@ -24,43 +19,31 @@ function openImagePopup(imageSrc, imageAlt, captionText) {
   openModal(imagePopup);
 }
 
-let cardToDelete = null; // Global variable to store the card element to delete
-
-function setupDeleteButton(deleteButton, cardData, cardElement) {
-  const deletePopup = document.querySelector('.popup_type_delete');
-  const deleteConfirmButton = deletePopup.querySelector('.popup__button_type_confirm');
-
-  if (cardData.owner._id !== currentUserId) {
-    deleteButton.remove();
-  } else {
-    deleteButton.addEventListener('click', () => {
-      openModal(deletePopup);
-
-      // Set the current card to delete
-      cardToDelete = { cardElement, cardId: cardData._id };
-    });
-  }
+let cardIdForDelete;
+let cardElementForDelete;
+function setupDeleteButton(cardId, cardElement) {
+  cardIdForDelete = cardId;
+  cardElementForDelete = cardElement;
+  openModal(deletePopup);
 }
 
-// Add event listener once to handle all deletions
 const deletePopup = document.querySelector('.popup_type_delete');
 const deleteConfirmButton = deletePopup.querySelector('.popup__button_type_confirm');
-
 deleteConfirmButton.addEventListener('click', () => {
-  if (cardToDelete) {
-    deleteCard(cardToDelete.cardId)
+  if (cardIdForDelete && cardElementForDelete) {
+    deleteCard(cardIdForDelete)
       .then(() => {
-        removeCard(cardToDelete.cardElement);
+        removeCard(cardElementForDelete);
         closeModal(deletePopup);
       })
       .catch(err => console.log("Failed to delete card:", err))
       .finally(() => {
-        cardToDelete = null; // Reset after deletion
+        cardIdForDelete = null;
+        cardElementForDelete = null;
       });
   }
 });
 
-// Rendering initial cards
 function renderCards(cards) {
   cards.forEach(cardData => {
     const cardElement = createCard(cardData, setupDeleteButton, openImagePopup, handleToggleLike, currentUserId);
@@ -78,7 +61,6 @@ Promise.all([getUserInfo(), getInitialCards()])
   })
   .catch(err => console.log(err));
 
-// Opening and closing modals
 const editButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
 const addButton = document.querySelector('.profile__add-button');
@@ -87,27 +69,25 @@ const avatarPopup = document.querySelector('.popup_type_avatar');
 const closeButtons = document.querySelectorAll('.popup__close');
 const popupButton = document.querySelector('.popup__button');
 
-// Opening modals with validation reset
 editButton.addEventListener('click', () => {
   nameInput.value = profileNameElement.textContent;
   descriptionInput.value = profileDescriptionElement.textContent;
-  clearValidation(editForm, validationConfig);  // Clear validation errors
+  clearValidation(editForm, validationConfig);
   openModal(editPopup);
 });
 
 addButton.addEventListener('click', () => {
-  addCardForm.reset();  // Reset form
-  clearValidation(addCardForm, validationConfig);  // Clear validation errors
+  addCardForm.reset();
+  clearValidation(addCardForm, validationConfig);
   openModal(addPopup);
 });
 
 profileImage.addEventListener('click', () => {
-  avatarForm.reset();  // Reset form
-  clearValidation(avatarForm, validationConfig);  // Clear validation errors
+  avatarForm.reset();
+  clearValidation(avatarForm, validationConfig);
   openModal(avatarPopup);
 });
 
-// Closing modals
 closeButtons.forEach(button => { 
   const popup = button.closest('.popup');     
   button.addEventListener('click', () => { 
@@ -115,7 +95,6 @@ closeButtons.forEach(button => {
   }); 
 }); 
 
-// Form handling for editing profile
 const editForm = document.querySelector('.popup__form[name="edit-profile"]');
 const profileNameElement = document.querySelector('.profile__title');
 const profileDescriptionElement = document.querySelector('.profile__description');
@@ -134,7 +113,6 @@ editForm.addEventListener('submit', (event) => {
     .catch(err => console.log(err));
 });
 
-// Form handling for adding new cards
 const addCardForm = document.querySelector('.popup__form[name="new-place"]');
 const cardNameInput = document.querySelector('.popup__input_type_card-name');
 const cardLinkInput = document.querySelector('.popup__input_type_url');
@@ -152,7 +130,6 @@ addCardForm.addEventListener('submit', (event) => {
     .catch(err => console.log(err));
 });
 
-// Form handling for updating profile picture
 const avatarForm = document.querySelector('.popup__form[name="avatar"]');
 const avatarLinkInput = document.querySelector('.popup__input_type_url-avatar');
 
@@ -167,7 +144,6 @@ avatarForm.addEventListener('submit', (event) => {
     .catch(err => console.log(err));
 });
 
-// Close popups on overlay click
 const popups = document.querySelectorAll('.popup');
 popups.forEach(popup => {
   popup.addEventListener('click', (event) => {
@@ -181,7 +157,6 @@ function renderLoading(isLoading) {
   popupButton.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
 }
 
-// Validation configuration
 const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -191,5 +166,4 @@ const validationConfig = {
   errorClass: 'popup__error_visible'
 };
 
-// Enable validation for all forms
 enableValidation(validationConfig);

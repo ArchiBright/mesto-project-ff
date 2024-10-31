@@ -1,6 +1,5 @@
 import { toggleLike as apiToggleLike } from './api.js';
 
-// Universal like toggle function
 export function handleToggleLike(cardData, currentUserId, likeCounter, likeButton) {
   const isLiked = likeButton.classList.contains('card__like-button_is-active');
 
@@ -16,7 +15,6 @@ export function handleToggleLike(cardData, currentUserId, likeCounter, likeButto
     .catch(err => console.log("Failed to toggle like:", err));
 }
 
-// Function to create a card
 export function createCard(cardData, deleteCallback, openImagePopup, toggleLikeCallback, currentUserId) {
   const template = document.querySelector('#card-template').content.cloneNode(true);
   const cardElement = template.querySelector('.card');
@@ -30,15 +28,18 @@ export function createCard(cardData, deleteCallback, openImagePopup, toggleLikeC
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
 
-  // Event listener for image click to open image popup
   cardImage.addEventListener('click', () => {
     openImagePopup(cardData.link, cardData.name, cardData.name); 
   });
 
-  // Adding the delete functionality
-  deleteCallback(deleteButton, cardData, cardElement);
+  if (cardData.owner._id !== currentUserId) {
+    deleteButton.remove();
+  } else {
+    deleteButton.addEventListener('click', () => {
+      deleteCallback(cardData._id, cardElement);
+    });
+  }
 
-  // Set like status based on current user's likes
   const userHasLiked = cardData.likes.some(like => like._id === currentUserId);
   likeCounter.textContent = cardData.likes.length;
 
@@ -46,7 +47,6 @@ export function createCard(cardData, deleteCallback, openImagePopup, toggleLikeC
     likeButton.classList.add('card__like-button_is-active');
   }
 
-  // Using handleToggleLike as a universal callback for the like button
   likeButton.addEventListener('click', () => {
     toggleLikeCallback(cardData, currentUserId, likeCounter, likeButton);
   });
@@ -54,7 +54,6 @@ export function createCard(cardData, deleteCallback, openImagePopup, toggleLikeC
   return cardElement;
 }
 
-// Function to remove a card
 export function removeCard(cardElement) { 
   cardElement.remove();
 }

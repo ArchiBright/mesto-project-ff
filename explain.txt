@@ -1,0 +1,33 @@
+const adress = {
+    initAdress: 'https://fetchadress.com/v3/',
+    header: 'gjiro;shglfskjhgsdfg'
+}
+
+let currentUserId;
+
+const toggleLike(cardId, isliked) {
+    return fetch(`{initAdress}likes`{
+        header: header,
+        method: isliked ? DELETE : PUT
+    })
+    
+}
+
+function toggleLikeState(cardData, currentUserId)
+
+likeButton = document.querySelector(.card__like-place)
+likeCounter = document.querySelector(.card__like-counter)
+
+// It shows if card is liked by you !
+// It shows overall amount of likes !
+// It adds new like if you click and remove like if it clicked by you again.
+
+cardData.like._id.contains(currentUserId) ? likeButton.classList.add('.isLiked') : likeButton.classList.remove('.isLiked')
+
+
+likeCounter.textContent = cardData.likes.length;
+
+likeButton.addEventListener('click', toggleLike(
+    cardId, isLiked = true;
+))
+
