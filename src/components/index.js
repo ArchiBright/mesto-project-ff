@@ -192,7 +192,7 @@ avatarForm.addEventListener('submit', (event) => {
 
 // Render loading state during data submission
 function renderLoading(isLoading) {
-  popupButton.textContent = isLoading ? 'Сохранение' : 'Сохранить';
+  popupButton.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
 }
 
 // Enable validation on all forms
