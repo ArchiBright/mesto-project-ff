@@ -23,15 +23,26 @@ function hideInputError(formElement, inputElement, config) {
   }
 
 // Function to check if input is valid
+// Updated isValid function
 function isValid(formElement, inputElement, settings) {
-    const nameRegex = /^[a-zA-Zа-яА-ЯёЁ -]+$/;
-
-    if (!inputElement.validity.valid) {
-        if (inputElement.type === 'text' && !nameRegex.test(inputElement.value)) {
-            showInputError(formElement, inputElement, "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы", settings);
+    const isProfileForm = formElement.name === "edit-profile";
+    const isNameOrDescriptionField = inputElement.name === "userName" || inputElement.name === "description";
+    
+    if (isProfileForm && isNameOrDescriptionField) {
+        // Custom error message handling for "name" and "profession" fields
+        if (inputElement.validity.patternMismatch) {
+            inputElement.setCustomValidity(inputElement.dataset.errorMessage);
         } else {
-            showInputError(formElement, inputElement, inputElement.validationMessage, settings);
+            inputElement.setCustomValidity("");
         }
+    } else {
+        // For other fields, use standard browser validation messages
+        inputElement.setCustomValidity("");
+    }
+
+    // Show or hide error message based on validity
+    if (!inputElement.validity.valid) {
+        showInputError(formElement, inputElement, inputElement.validationMessage, settings);
     } else {
         hideInputError(formElement, inputElement, settings);
     }
